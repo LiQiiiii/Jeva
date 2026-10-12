@@ -14,14 +14,23 @@ National University of Singapore
 
 <p align="center"><a href="site/assets/figure1.pdf"><img src="site/assets/figure1.png" width="1000" alt="Jeva architecture and four structural properties: null awareness, permutation invariance, option scalability, and reusable option memory"></a></p>
 
-Jeva makes typed decisions directly, without generating textual rationales.
-A shared language encoder independently represents the request and each option.
-A lightweight decision module refines only the request state against immutable
-option memory, combining set-dependent judgment with reusable computation.
+Jeva is a system one model with native design. Give it a state and typed
+questions; get candidate probabilities, a Boolean probability, or an expected
+rubric score. The language encoder represents the state and each option
+independently. A compact decision stack updates only the state against the
+complete option memory, so decisions remain set-dependent while option
+computation is reusable.
 
-The Python API runs locally, with no server required. It merges LoRA into the
-loaded model and enables hybrid option caching by default; checkpoint files are
-not modified.
+- **Permutation symmetry:** reordering candidates permutes their probabilities,
+  rather than changing their semantic identities.
+- **Variable candidate sets:** shared scoring does not impose a fixed label
+  vocabulary. Encoding runs in bounded batches; all options reach the head.
+- **Null awareness:** an explicit coverage estimate separates answer availability
+  from competition between available candidates.
+- **Two-level reuse:** cache complete option tuples, or reuse individual option
+  vectors and projected keys/values across newly assembled sets.
+
+
 
 ## Installation
 
@@ -176,7 +185,7 @@ jeva-finetune \
 
 See [fine-tuning](docs/finetuning.md) for the data schema, objectives, validation,
 and resume. The small [JSONL example](examples/finetune_data.jsonl) illustrates
-the format; it is not a training corpus. Install `pip install -e '.[train]'`
+the format. Install `pip install -e '.[train]'`
 only if you want to read your training data through the Hugging Face datasets API.
 
 ## Repository
