@@ -14,24 +14,25 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  height: clamp(510px, 65svh, 660px);
+  height: clamp(370px, 43svh, 440px);
   color: var(--opening-wine);
   background: var(--opening-paper);
   border-bottom: 1px solid #e8ded0;
 }
 .opening-layer { position: absolute; inset: 0; overflow: hidden; background: var(--opening-paper); }
 .opening-composition {
+  position: relative;
   height: 100%;
   max-width: 1152px;
   margin: auto;
-  padding: 40px 28px 88px;
+  padding: 20px 28px 70px;
   display: grid;
   grid-template-columns: 340px minmax(0, 1fr);
   gap: 64px;
   align-items: center;
 }
 .opening-portrait {
-  height: 370px;
+  height: 300px;
   width: 340px;
   position: relative;
   overflow: hidden;
@@ -42,35 +43,46 @@
 }
 .opening-portrait img {
   position: absolute;
-  width: 540px;
+  width: 500px;
   height: auto;
   max-width: none;
-  left: -139px;
+  left: -117px;
   top: -49px;
   filter: grayscale(1) sepia(.45) contrast(1.1);
 }
 .opening-quote { margin: 0; min-width: 0; }
-.opening-eyebrow { font: 500 10px/1.5 var(--mono); letter-spacing: .2em; text-transform: uppercase; margin: 0 0 24px; color: #8b5c42; }
-.opening-quote blockquote { margin: 0; min-height: 190px; display: flex; flex-direction: column; justify-content: center; font: 400 clamp(34px, 3.4vw, 49px)/1.24 Georgia, "Times New Roman", serif; letter-spacing: -.025em; text-wrap: balance; }
-.opening-quote figcaption { margin: 28px 0 0; padding: 0; font-size: 12px; line-height: 1.6; color: #6e4135; }
+.opening-eyebrow { font: 500 10px/1.5 var(--mono); letter-spacing: .2em; text-transform: uppercase; margin: 0 0 16px; color: #8b5c42; }
+.opening-quote blockquote { margin: 0; min-height: 170px; display: flex; flex-direction: column; justify-content: center; font: 400 clamp(34px, 3.4vw, 49px)/1.24 Georgia, "Times New Roman", serif; letter-spacing: -.025em; text-wrap: balance; }
+.opening-quote figcaption { margin: 18px 0 0; padding: 0; font-size: 12px; line-height: 1.6; color: #6e4135; }
 .opening-authors { display: block; font-weight: 500; letter-spacing: .02em; }
 .opening-quote cite { display: block; margin-top: 3px; font: italic 13px/1.5 Georgia, "Times New Roman", serif; }
-.opening-symbols { position: absolute; inset: 0; pointer-events: none; user-select: none; font: italic 44px/1 Georgia, serif; opacity: .045; }
-.opening-symbols span { position: absolute; }
-.opening-symbols span:first-child { top: 34px; left: 4%; transform: rotate(-8deg); }
-.opening-symbols span:nth-child(2) { bottom: 78px; right: 4%; transform: rotate(-6deg); }
-.opening-symbols span:last-child { top: 34px; right: 8%; font-size: 80px; }
+.opening-symbols {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  background: currentColor;
+  opacity: .085;
+  mask-image: url("assets/opening-symbols.svg");
+  -webkit-mask-image: url("assets/opening-symbols.svg");
+  mask-size: 480px 200px;
+  -webkit-mask-size: 480px 200px;
+  mask-repeat: repeat;
+  -webkit-mask-repeat: repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
 .opening-reveal { z-index: 2; pointer-events: none; background: var(--opening-wine); color: #fff5df; clip-path: circle(var(--lens-radius) at var(--lens-x) var(--lens-y)); }
 .opening-reveal .opening-portrait { mix-blend-mode: screen; opacity: .95; }
 .opening-reveal .opening-portrait img { filter: grayscale(1) contrast(1.45) invert(1); }
 .opening-reveal .opening-eyebrow { color: #e9be79; }
-.opening-reveal .opening-symbols { color: #f5cf85; opacity: .09; }
+.opening-reveal .opening-symbols { color: #f5cf85; opacity: .12; }
 .opening-reveal .opening-quote figcaption { color: #e7c4a0; }
 .opening-quote blockquote[lang="zh-CN"] { position: relative; font: 500 clamp(27px, 2.6vw, 38px)/1.72 "Jeva Opening Chinese", "Songti SC", "Noto Serif CJK SC", "SimSun", serif; letter-spacing: .02em; }
 .opening-quote blockquote[lang="zh-CN"] > span { display: block; }
 .opening-quote blockquote[lang="zh-CN"] > span:first-child { color: #f6d56a; }
 .opening-reveal .opening-quote blockquote[lang="zh-CN"] { text-indent: 0; }
-.opening-controls { position: absolute; z-index: 3; bottom: 25px; left: max(28px, calc((100% - 1096px) / 2)); right: max(28px, calc((100% - 1096px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #704637; }
+.opening-controls { position: absolute; z-index: 3; bottom: 18px; left: max(28px, calc((100% - 1096px) / 2)); right: max(28px, calc((100% - 1096px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #704637; }
 .opening-discover { display: flex; align-items: center; gap: 19px; }
 .opening-pointer-hint { display: none; align-items: center; gap: 9px; font-size: 11px; }
 .opening-pointer-hint i { width: 13px; height: 13px; border: 1px solid currentColor; border-radius: 50%; display: inline-block; }
@@ -85,25 +97,24 @@
 .opening-fallback { position: absolute; z-index: 3; bottom: 54px; width: 100%; text-align: center; padding: 0 24px; font-size: 14px; }
 @media (max-width: 1000px) {
   .opening-composition { grid-template-columns: 270px minmax(0, 1fr); gap: 32px; }
-  .opening-portrait { width: 270px; height: 330px; }
+  .opening-portrait { width: 270px; height: 290px; }
   .opening-portrait img { width: 490px; left: -144px; top: -51px; }
-  .opening-quote blockquote { font-size: 36px; min-height: 205px; }
+  .opening-quote blockquote { font-size: 36px; min-height: 180px; }
   .opening-quote blockquote[lang="zh-CN"] { font-size: 29px; }
 }
 @media (max-width: 650px) {
-  .einstein-opening { height: 620px; }
-  .opening-composition { grid-template-columns: minmax(0, 1fr); grid-template-rows: 230px 1fr; align-content: center; gap: 3px; padding: 16px 28px 85px; text-align: center; }
-  .opening-portrait { margin: auto; width: 230px; height: 230px; }
-  .opening-portrait img { width: 370px; left: -109px; top: -51px; }
+  .einstein-opening { height: 500px; }
+  .opening-composition { grid-template-columns: minmax(0, 1fr); grid-template-rows: 170px 1fr; align-content: center; gap: 8px; padding: 8px 28px 68px; text-align: center; }
+  .opening-portrait { margin: auto; width: 170px; height: 170px; }
+  .opening-portrait img { width: 285px; left: -79px; top: -34px; }
   .opening-quote { align-self: start; }
-  .opening-eyebrow { font-size: 9px; margin-bottom: 14px; }
+  .opening-eyebrow { font-size: 9px; margin-bottom: 8px; }
   .opening-quote blockquote { max-width: 450px; min-height: 145px; margin: auto; font-size: clamp(27px, 5.8vw, 34px); line-height: 1.25; }
   .opening-quote blockquote[lang="zh-CN"] { font-size: clamp(21px, 4.7vw, 27px); line-height: 1.75; }
-  .opening-quote figcaption { margin-top: 20px; font-size: 11px; }
+  .opening-quote figcaption { margin-top: 12px; font-size: 11px; }
   .opening-quote cite { font-size: 12px; }
-  .opening-symbols { font-size: 25px; }
-  .opening-symbols span:last-child { font-size: 50px; }
-  .opening-controls { bottom: 22px; }
+  .opening-symbols { mask-size: 384px 160px; -webkit-mask-size: 384px 160px; }
+  .opening-controls { bottom: 18px; }
 }
 @media (hover: none), (pointer: coarse) {
   .opening-interactive .opening-pointer-hint { display: none; }

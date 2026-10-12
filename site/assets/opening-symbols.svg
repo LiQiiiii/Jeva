@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="200" viewBox="0 0 480 200">
+  <g fill="#000" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="21" text-anchor="middle">
+    <text x="60" y="34">{ A, B, C }</text>
+    <text x="180" y="34" font-size="29">∅</text>
+    <text x="300" y="34">A → B</text>
+    <text x="420" y="34">{ B, D }</text>
+    <text x="60" y="84">{ C, A, B }</text>
+    <text x="180" y="84">A · B · C</text>
+    <text x="300" y="84">{ A, C }</text>
+    <text x="420" y="84" font-size="29">∅</text>
+    <text x="60" y="134" font-size="29">∅</text>
+    <text x="180" y="134">{ B, C, D }</text>
+    <text x="300" y="134">A, B, …</text>
+    <text x="420" y="134">B ↔ C</text>
+    <text x="60" y="184">{ A, D }</text>
+    <text x="180" y="184">C → A</text>
+    <text x="300" y="184" font-size="29">∅</text>
+    <text x="420" y="184">{ A, B, C }</text>
+  </g>
+</svg>
