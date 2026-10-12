@@ -147,9 +147,7 @@ jeva-evaluate \
 ```
 
 The [evaluation guide](docs/evaluation.md) covers input format, metrics,
-permutations, cache comparisons, and resumable runs. Prepared benchmark data will
-be distributed separately on Hugging Face; this repository contains no benchmark
-data, saved experimental results, or dataset publication tools.
+permutations, cache comparisons, and resumable runs. 
 
 <p align="center"><a href="site/assets/structural_properties.pdf"><img src="site/assets/structural_properties.png" width="1200" alt="Four experiments from the paper: null detection, option-order stability, candidate scaling, and cache reuse"></a></p>
 
