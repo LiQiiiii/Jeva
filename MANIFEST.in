@@ -1,0 +1,6 @@
+include LICENSE NOTICE CITATION.cff requirements.txt requirements-core.txt
+recursive-include docs *.md
+recursive-include examples *.py *.jsonl
+recursive-include train *.py
+recursive-include site *.html *.css *.js *.svg *.png *.pdf .nojekyll
+global-exclude *.py[cod] __pycache__

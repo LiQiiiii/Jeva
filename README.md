@@ -1,2 +1,207 @@
+<div align="center">
+
 # Jeva
-Jeva: System One Models from First Principles
+### System One Models from First Principles
+
+**Qi Li · Xinchao Wang**  
+National University of Singapore
+
+[Model](https://huggingface.co/LIQIIIII/Jeva-4B) · [Project page](https://liqiiiii.github.io/Jeva/) · [Evaluation](docs/evaluation.md) · [Fine-tuning](docs/finetuning.md)
+
+**Null-aware. Order-independent. Scalable. Cacheable.**
+
+</div>
+
+<p align="center"><a href="site/assets/figure1.pdf"><img src="site/assets/figure1.png" width="1000" alt="Jeva architecture and four structural properties: null awareness, permutation invariance, option scalability, and reusable option memory"></a></p>
+
+Jeva makes typed decisions directly, without generating textual rationales.
+A shared language encoder independently represents the request and each option.
+A lightweight decision module refines only the request state against immutable
+option memory, combining set-dependent judgment with reusable computation.
+
+The Python API runs locally, with no server required. It merges LoRA into the
+loaded model and enables hybrid option caching by default; checkpoint files are
+not modified.
+
+## Installation
+
+Use Linux x86_64, an NVIDIA GPU, and a clean conda environment:
+
+```bash
+conda create -n jeva -c nvidia/label/cuda-12.8.1 python=3.12 cuda-nvcc=12.8.93 -y
+conda activate jeva
+git clone https://github.com/LiQiiiii/Jeva.git
+cd Jeva
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+jeva-doctor --check-kernels --strict
+```
+
+The requirements pair PyTorch 2.9.1 / CUDA 12.8 with matching accelerated kernels.
+A compatible NVIDIA driver is required. The first request may compile kernels.
+See [runtime configuration](docs/runtime.md) for memory limits and the slower
+reference installation in `requirements-core.txt`.
+
+## Local inference
+
+```python
+from jeva import Jeva, Choice, Noul, Score
+
+model = Jeva.from_pretrained("LIQIIIII/Jeva-4B", device="cuda")
+
+r = model.system_one(
+    state="My invoice was charged twice and nobody answers the phone!",
+    questions={
+        "urgency": Noul(instructions="Is this urgent?"),
+        "department": Choice(
+            instructions="Which team should handle this?",
+            criteria={
+                "billing": "Charges, invoices, refunds",
+                "technical": "Bugs and outages",
+            },
+            allow_null=True,
+        ),
+        "frustration": Score(
+            instructions="How frustrated is the customer?",
+            criteria=["Calm", "Frustrated", "Very angry"],
+        ),
+    },
+)
+
+print(r.answers["urgency"].noul)
+print(r.answers["department"].choice)
+print(r.answers["department"].probabilities)
+print(r.answers["department"].null_probability)
+print(r.answers["frustration"].score)
+print(r.usage.input_tokens, r.latency_ms)
+```
+
+| Interface | Result |
+| :-- | :-- |
+| `Choice` | A candidate key and its probability distribution |
+| `Choice(..., allow_null=True)` | A candidate key or `None`, with explicit null probability |
+| `Noul` | Probability that the statement is true, between 0 and 1 |
+| `Score` | Expected rubric level; supplied `values` define custom numerical units |
+
+For open-set Choice, candidate probabilities plus `null_probability` sum to one.
+`conditional_probabilities` reports preference conditional on selecting a candidate.
+Noul is a truth probability, not the null outcome. Exact ties use the first
+candidate; open-set ties place null first.
+
+Mappings format options as `label: description`; lists preserve their text.
+For exact dataset option text and order, use `model.predict(...)`.
+The [runnable example](examples/local_inference.py) returns all three output types.
+
+### Offline loading
+
+```bash
+jeva-download LIQIIIII/Jeva-4B --local-dir ./models/Jeva-4B
+```
+
+```python
+model = Jeva.from_pretrained("./models/Jeva-4B", local_files_only=True)
+```
+
+For access-controlled weights, authenticate first with `hf auth login` using an
+authorized account. Pass `revision="<commit hash>"` to pin a Hub checkpoint.
+
+### Ranking and reuse
+
+```python
+r = model.rank(
+    state="Find a tool that can refund a duplicate invoice.",
+    candidates={
+        "refund": "Issue a refund for an existing payment.",
+        "status": "Check whether an invoice has been paid.",
+        "search": "Search customer contact details.",
+    },
+    instructions="Rank the tools by suitability for this request.",
+    top_k=3,
+)
+for item in r.ranking:
+    print(item.label, item.probability)
+
+print(model.cache_info())
+model.clear_cache()
+```
+
+`top_k` limits returned results, not the candidate pool. Keep the model instance
+alive to reuse option computation across requests. Choose `cache="set"` for exact
+ordered tuples, `cache="hybrid"` for additional individual-option reuse, or
+`cache="none"` to disable caching. No previous answer is cached.
+
+Caches have entry and tensor-byte limits. `usage.input_tokens` counts encoder
+tokens actually processed; `requested_input_tokens` includes reused tokens.
+`latency_ms` includes tokenization and synchronized execution, excluding model
+loading. Over-limit inputs raise an error unless truncation is explicitly enabled.
+
+## Evaluation
+
+Run the model on a local JSONL file:
+
+```bash
+jeva-evaluate \
+  --model ./models/Jeva-4B \
+  --data ./my_eval.jsonl \
+  --output ./results/my_eval
+```
+
+The [evaluation guide](docs/evaluation.md) covers input format, metrics,
+permutations, cache comparisons, and resumable runs. Prepared benchmark data will
+be distributed separately on Hugging Face; this repository contains no benchmark
+data, saved experimental results, or dataset publication tools.
+
+<p align="center"><a href="site/assets/structural_properties.pdf"><img src="site/assets/structural_properties.png" width="1200" alt="Four experiments from the paper: null detection, option-order stability, candidate scaling, and cache reuse"></a></p>
+
+The manuscript reports 78.30% Typed Decisions accuracy, 98.66% null-detection
+AUROC, and zero observed flips on 600 Choice items. Jeva handles 2,048 candidates
+at 69.88% accuracy and 12.04 s median latency. Full option reuse across newly
+assembled MLDR sets yields a 27.98× ratio of median request latencies, excluding
+separately measured priming. These are paper measurements, not outputs of the
+example code.
+
+## Fine-tune on your own data
+
+```bash
+jeva-finetune \
+  --model ./models/Jeva-4B \
+  --train-data ./my_train.jsonl \
+  --validation-data ./my_validation.jsonl \
+  --output-dir ./runs/my-jeva \
+  --mode head --device cuda \
+  --epochs 3 --batch-size 1 --gradient-accumulation 8
+```
+
+`head` trains the decision module and projections while freezing the encoder.
+`lora` also updates the existing adapter. Load the resulting directory with
+`Jeva.from_pretrained()`.
+
+See [fine-tuning](docs/finetuning.md) for the data schema, objectives, validation,
+and resume. The small [JSONL example](examples/finetune_data.jsonl) illustrates
+the format; it is not a training corpus. Install `pip install -e '.[train]'`
+only if you want to read your training data through the Hugging Face datasets API.
+
+## Repository
+
+```text
+src/jeva/      local API, model runtime, evaluation, fine-tuning, installation checks
+examples/      inference example and training-format illustration
+train/         fine-tuning command wrapper
+docs/          installation, evaluation, and fine-tuning guides
+site/          project page, paper figures, and interactive diagrams
+.github/       project-page deployment workflow
+```
+
+## Citation and license
+
+```bibtex
+@misc{li2026jeva,
+  title  = {Jeva: System One Models from First Principles},
+  author = {Li, Qi and Wang, Xinchao},
+  year   = {2026},
+  note   = {Manuscript}
+}
+```
+
+Code: [Apache-2.0](LICENSE). Model weights and datasets retain their respective
+licenses. No model weights, credentials, or original training corpora are included.

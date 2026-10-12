@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use Jeva, please cite the manuscript."
+title: "Jeva: System One Models from First Principles"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Li
+    given-names: Qi
+  - family-names: Wang
+    given-names: Xinchao
+license: Apache-2.0
+

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Jeva: System One Models from First Principles. Local typed decisions with immutable option memory, explicit null outcomes, and reusable computation.">
+  <meta name="theme-color" content="#cc0000">
+  <title>Jeva · System One Models from First Principles</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="site-config.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-nav">
+  <a class="wordmark" href="#">Jeva<span aria-hidden="true">.</span></a>
+  <nav aria-label="Main navigation"><a href="#principles">Principles</a><a href="#mechanism">In motion</a><a href="#results">Results</a><a href="#get-started">Use Jeva</a></nav>
+</header>
+<main id="main">
+  <section class="hero">
+    <p class="eyebrow">A native architecture for typed decisions</p>
+    <h1><span class="hero-name">Jeva</span><span class="hero-title">System One Models <em>from First Principles</em></span></h1>
+    <p class="authors">Qi Li, Xinchao Wang<sup aria-label="corresponding author">*</sup></p>
+    <p class="affiliation">National University of Singapore<br><span class="corresponding">* Corresponding author</span></p>
+    <p class="hero-description">The state changes. The alternatives often do not.<br>Encode independently. Decide collectively. Reuse what stays the same.</p>
+    <div class="resource-links"><a class="resource primary" href="#get-started">Run locally <span aria-hidden="true">↗</span></a><a class="resource" data-link="model" href="https://huggingface.co/LIQIIIII/Jeva-4B">Model weights <span aria-hidden="true">↗</span></a><a class="resource" data-link="repository" hidden>Code <span aria-hidden="true">↗</span></a><a class="resource" data-link="paper" hidden>Paper <span aria-hidden="true">↗</span></a><a class="resource" href="#evaluation">Evaluation</a></div>
+    <p id="model-access" class="access-note"></p>
+  </section>
+
+  <section id="principles" class="principles section">
+    <div class="section-heading"><p class="eyebrow">01 / The decision problem</p><h2>Four requirements.<br>One coherent design.</h2></div>
+    <div class="principle-list">
+      <article><span class="principle-number">01</span><div><h3>Order should not decide the answer.</h3><p>Symmetric candidate aggregation makes option probabilities permutation-equivariant.</p><span class="term">Permutation invariance</span></div></article>
+      <article><span class="principle-number">02</span><div><h3>More options, not a new output layer.</h3><p>A shared scoring rule handles variable candidate counts. Bounded encoding batches keep the complete set available to the decision head.</p><span class="term gold">Option scalability</span></div></article>
+      <article><span class="principle-number">03</span><div><h3>“None apply” is an answer.</h3><p>Coverage estimates whether an acceptable option exists, separately from competition among the options.</p><span class="term">Null awareness</span></div></article>
+      <article><span class="principle-number">04</span><div><h3>Unchanged information should be reusable.</h3><p>Option vectors and their layer-specific projections can be reused across new states and newly assembled sets.</p><span class="term gold">Computational reuse</span></div></article>
+    </div>
+  </section>
+
+  <figure class="paper-figure section"><a href="assets/figure1.pdf" aria-label="Open the architecture figure as a vector PDF"><img src="assets/figure1.png" alt="Above: joint-encoding System One architecture and Jeva. Below: null awareness, candidate-order symmetry, scalable options, and reusable option memory." loading="lazy"></a><figcaption><span class="figure-label">Four requirements, one decision architecture.</span> Above: a representative joint-encoding model and Jeva. Below: four schematic views of null awareness, permutation invariance, option scalability, and computational reuse. <a href="assets/figure1.pdf">Vector PDF ↗</a></figcaption></figure>
+
+  <section id="method-figures" class="section">
+    <div class="section-heading"><p class="eyebrow">Inside the architecture</p><h2>Three distinctions that matter.</h2></div>
+    <div class="method-figure-grid">
+      <figure><a href="assets/set_conditioned_decision.pdf"><img src="assets/set_conditioned_decision.png" alt="Replacing one candidate changes the refined state and reverses the preference between retained candidates." loading="lazy"></a><figcaption><span class="figure-label">Fixed options, set-dependent decisions.</span> A changed alternative shifts the state and reverses the preference between A and B.</figcaption></figure>
+      <figure><a href="assets/coverage_competition.pdf"><img src="assets/coverage_competition.png" alt="Competition and coverage respond differently to score shifts and new candidates." loading="lazy"></a><figcaption><span class="figure-label">Competition is not coverage.</span> Relative preference and answer availability capture different properties of a candidate set.</figcaption></figure>
+      <figure><a href="assets/jeva_option_reuse.pdf"><img src="assets/jeva_option_reuse.png" alt="Reuse individual option memories across new states and recombined candidate sets without whole-set cache hits." loading="lazy"></a><figcaption><span class="figure-label">New sets, reusable options.</span> Individual memories survive recombination; every state and decision is computed afresh.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="mechanism" class="section">
+    <div class="section-heading horizontal"><div><p class="eyebrow">02 / Jeva in motion</p><h2>Encode once.<br>Read, refine, decide.</h2></div><p class="section-description">Follow one request through independent encoding, candidate-conditioned state refinement, and the typed readout. This animation explains the computation; it is not a recorded model trace.</p></div>
+    <div class="animation-frame">
+      <div class="animation-toolbar"><div class="segmented" role="group" aria-label="Computation phases"><button class="phase-button active" data-phase="0" aria-pressed="true">1 · Options</button><button class="phase-button" data-phase="1" aria-pressed="false">2 · State</button><button class="phase-button" data-phase="2" aria-pressed="false">3 · Refine</button><button class="phase-button" data-phase="3" aria-pressed="false">4 · Read out</button></div><button id="flow-play" class="play-button" aria-pressed="false">Play <span aria-hidden="true">▶</span></button></div>
+      <div class="diagram-scroll"><svg id="flow-diagram" viewBox="0 0 1060 376" role="img" aria-labelledby="flow-title flow-description">
+        <title id="flow-title">Independent encoding and state-only decision refinement</title><desc id="flow-description">The state and options use shared encoder weights. Only the state changes in the decision block. A coverage-aware readout returns Choice, Noul, or Score.</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="currentColor"/></marker></defs>
+        <g class="flow-lines"><path class="wire state-wire" d="M180 89H246M409 89H478M630 89H706M868 89H932"/><path class="wire option-wire" d="M180 270H246M409 270H478M630 270H787V127"/><path class="wire readout-wire" d="M630 248H661V206H984V126"/><path class="wire residual-wire" d="M681 89V157H903V89"/></g>
+        <g class="flow-node state-node" data-stage="1"><rect x="25" y="52" width="155" height="74" rx="5"/><text x="102" y="84" class="node-main">Request state</text><text x="102" y="105" class="node-small">state + question</text></g>
+        <g class="flow-node option-node" data-stage="0"><rect x="25" y="229" width="155" height="82" rx="5"/><text x="102" y="260" class="node-main">Candidate set</text><text x="102" y="284" class="node-small">o₁, o₂, …, oₖ</text></g>
+        <g class="encoder-region"><rect x="226" y="28" width="203" height="304" rx="6"/><text x="327" y="183" class="shared-label">SHARED WEIGHTS</text></g>
+        <g class="flow-node encoder-node" data-stage="1"><rect x="246" y="52" width="163" height="74" rx="5"/><text x="327" y="84" class="node-main">Text encoder</text><text x="327" y="105" class="node-small">pool + project</text></g>
+        <g class="flow-node encoder-node" data-stage="0"><rect x="246" y="233" width="163" height="74" rx="5"/><text x="327" y="265" class="node-main">Text encoder</text><text x="327" y="286" class="node-small">pool + project</text></g>
+        <g class="flow-node representation" data-stage="1"><rect x="478" y="52" width="152" height="74" rx="5"/><text x="554" y="82" class="node-main">Initial state z₀</text><text x="554" y="104" class="node-small">request-dependent</text></g>
+        <g class="flow-node memory-node" data-stage="0"><rect x="478" y="222" width="152" height="96" rx="5"/><text x="554" y="252" class="node-main">Option memory</text><text x="554" y="275" class="node-small">vectors + K/V views</text><text x="554" y="298" class="node-small">reusable</text></g>
+        <g class="flow-node decision-node" data-stage="2"><rect x="706" y="52" width="162" height="74" rx="5"/><text x="787" y="82" class="node-main">Decision block</text><text x="787" y="105" class="node-small">mixer + FFN</text></g>
+        <text x="793" y="183" class="diagram-note">only the state is updated</text>
+        <g class="flow-node readout-node" data-stage="3"><rect x="932" y="52" width="103" height="74" rx="5"/><text x="984" y="83" class="node-main">Readout</text><text x="984" y="105" class="node-small">coverage + q</text></g>
+        <g class="typed-output"><text x="886" y="253" class="output-label">Choice</text><text x="980" y="253" class="output-value">option / null</text><text x="886" y="280" class="output-label">Noul</text><text x="980" y="280" class="output-value">P(true)</text><text x="886" y="307" class="output-label">Score</text><text x="980" y="307" class="output-value">E[value]</text></g>
+      </svg></div>
+      <div class="phase-caption" aria-live="polite"><span id="phase-count">01 / 04</span><p id="phase-text">Encode each option independently. Store its semantic vector and the projected keys and values used by the decision block.</p></div>
+    </div>
+  </section>
+
+  <section id="reuse" class="section">
+    <div class="section-heading horizontal"><div><p class="eyebrow">03 / Same semantics, new decisions</p><h2>A new request is not<br>a cold start.</h2></div><p class="section-description">Choose a scenario to see what each cache reuses. Every scenario has a new request state; no previous answer is reused. Counts below are exact for this illustrative three-option example, not benchmark timings.</p></div>
+    <div class="cache-demo">
+      <div class="cache-scenarios" role="group" aria-label="Cache reuse scenarios"><button data-scenario="cold" class="active" aria-pressed="true">Cold request</button><button data-scenario="same" aria-pressed="false">Same set</button><button data-scenario="reorder" aria-pressed="false">Reordered set</button><button data-scenario="recombine" aria-pressed="false">Recombined set</button></div>
+      <div class="cache-body">
+        <div class="cache-input"><p class="small-label">CHANGING REQUEST</p><p class="request-example" id="request-example">“My payment was taken twice.”</p><p class="small-label">CURRENT CANDIDATES</p><div id="candidate-tokens" class="candidate-tokens"></div><p id="cache-explanation" class="cache-explanation"></p></div>
+        <div class="cache-memory"><p class="small-label">INDEPENDENT OPTION MEMORY</p><div id="memory-bank" class="memory-bank"></div><div class="memory-legend"><span><i class="memory-dot cached"></i> Already cached</span><span><i class="memory-dot fresh"></i> Needs encoding</span></div></div>
+        <div class="cache-cost"><table><caption>Candidate encoding needed</caption><thead><tr><th scope="col">Mode</th><th scope="col">Options</th></tr></thead><tbody><tr><th scope="row">Cache-Off</th><td><span id="off-count">3</span><span class="count-total"> / 3</span></td></tr><tr><th scope="row">Set</th><td><span id="set-count">3</span><span class="count-total"> / 3</span></td></tr><tr class="hybrid-row"><th scope="row">Hybrid</th><td><span id="hybrid-count">3</span><span class="count-total"> / 3</span></td></tr></tbody></table><p class="set-hit">Exact-set hit <strong id="set-hit">No</strong></p><p class="set-hit">Option reuse <strong id="option-reuse">0 / 3</strong></p></div>
+      </div>
+      <p class="cache-footnote">Warm scenarios start from the cached tuple [A, B, C]. The implementation keys exact-set entries by the ordered tuple; Hybrid can gather individual memories in any requested order.</p>
+    </div>
+  </section>
+
+  <section id="results" class="section">
+    <div class="section-heading horizontal"><div><p class="eyebrow">04 / Measured behavior</p><h2>Useful decisions.<br>Predictable structure.</h2></div><p class="section-description">One decision block with a Qwen3.5-4B backbone. These are measured results from the manuscript—not outputs of the animations above.</p></div>
+    <div class="stat-strip"><div><strong>78.30<span>%</span></strong><p>Typed Test accuracy<br><small>2,000 requests</small></p></div><div><strong>98.66<span>%</span></strong><p>Null-detection AUROC<br><small>BANKING77 · K = 16</small></p></div><div><strong>0<span> flips</span></strong><p>Under tested permutations<br><small>600 Choice items</small></p></div><div><strong>2,048</strong><p>Options in one decision set<br><small>ToolRet diagnostic</small></p></div></div>
+    <figure class="result-figure"><a href="assets/structural_properties.pdf"><img src="assets/structural_properties.png" alt="Four experiments: null detection, candidate-aligned permutation stability, accuracy-latency trade-offs, and cache reuse." loading="lazy"></a><figcaption><span class="figure-label">Four structural properties, measured.</span> Null detection on BANKING77 with 16 candidates; order stability on 600 Choice items; supported-request accuracy and latency as candidate counts increase; and cache reuse on Typed Decisions and MLDR. Novel-set priming is timed separately.</figcaption></figure>
+    <div class="results-table-wrap"><table class="results-table">
+      <caption>Selected comparisons from the paper · accuracy (%) with complete coverage</caption>
+      <thead><tr><th scope="col">Model</th><th scope="col">Typed Test</th><th scope="col">BANKING77<br><small>K = 16</small></th><th scope="col">MASSIVE<br><small>K = 16</small></th><th scope="col">Mind2Web<br><small>Cross-task</small></th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Jev-1.13.0</th><td>74.10</td><td class="rank-two">82.50</td><td class="rank-two">81.61</td><td class="rank-two">66.26</td></tr>
+        <tr><th scope="row">JevK5 native</th><td>62.30</td><td>69.03</td><td>69.70</td><td>51.47</td></tr>
+        <tr><th scope="row">InternDecision-4B</th><td class="rank-one">78.70</td><td>75.03</td><td class="rank-three">75.79</td><td>48.02</td></tr>
+        <tr><th scope="row">Re·Flex-4B</th><td>58.85</td><td>74.38</td><td>71.39</td><td class="rank-three">52.08</td></tr>
+        <tr><th scope="row">KEV-4B (BF16)</th><td>66.00</td><td class="rank-three">82.47</td><td>73.54</td><td>40.32</td></tr>
+        <tr><th scope="row">CLM-8B</th><td>43.05</td><td>18.15</td><td>23.23</td><td>21.73</td></tr>
+        <tr class="jeva-result"><th scope="row">Jeva-4B</th><td class="rank-two">78.30</td><td class="rank-one">91.62</td><td class="rank-one">90.22</td><td class="rank-one">79.99</td></tr>
+      </tbody>
+    </table><p class="code-note">Accuracy includes null where applicable. Gold shades retain the top-three rankings from the paper's full comparison.</p></div>
+    <figure class="result-figure"><a href="assets/decision_quality.pdf"><img src="assets/decision_quality.png" alt="Measured typed-output fidelity, null-detection ROC, and candidate-order stability across models." loading="lazy"></a><figcaption>Typed-output fidelity, null detection, and candidate-order stability. Jeva has zero observed flips; Jev-1.13.0 flips on 17.00% of Choice items and achieves 66.67% all-order accuracy.</figcaption></figure>
+    <div class="compact-result-grid">
+      <figure class="result-figure"><a href="assets/toolret_scaling_column.pdf"><img src="assets/toolret_scaling_column.png" alt="ToolRet accuracy, median latency and support across six distinct-query candidate-count cohorts." loading="lazy"></a><figcaption>Six distinct-query ToolRet cohorts. Full-support accuracy and valid coverage are reported separately; unsupported requests are excluded from accuracy comparisons.</figcaption></figure>
+      <figure class="result-figure"><a href="assets/candidate_reuse_column.pdf"><img src="assets/candidate_reuse_column.png" alt="MLDR and Typed Decisions cache ablation: paired speedups, shared-bank latency, and candidate rows avoided." loading="lazy"></a><figcaption>MLDR: 50 matched queries at each reuse level, with separately timed priming excluded. Typed: 2,000 requests including cold starts. No decisions change.</figcaption></figure>
+    </div>
+    <figure class="result-figure nested-figure"><a href="assets/jeva_all_size_accuracy.pdf"><img src="assets/jeva_all_size_accuracy.png" alt="Correctness for the same 83 queries across nested candidate sets of 32 to 2,048 options: Jeva remains correct at every size on 58 queries, JevK5 on 48, and CLM on 7." loading="lazy"></a><figcaption><span class="figure-label">The same queries, larger candidate sets.</span> All-size accuracy requires a correct decision at every tested size: Jeva 69.88%, JevK5 57.83%, CLM 8.43%.</figcaption></figure>
+    <div class="results-notes"><p><strong>Scalable candidate evaluation.</strong> At 2,048 options, Jeva achieves 69.88% accuracy and 12.04 s p50 latency on the ToolRet diagnostic. Encoder batches are bounded; the decision head still sees the entire candidate set.</p><p><strong>Reuse across requests.</strong> On 2,000 Typed Test requests in 16 shared-bank episodes, p50 latency falls from 93.1 ms (Off) to 46.6 ms (Set) and 46.7 ms (Hybrid), approximately 2× faster. Both cached modes avoid 99.2% of candidate-row encodings. On newly assembled MLDR sets, Hybrid reduces p50 from 2,096.1 to 1,073.6 ms at approximately 50% reuse and from 2,102.0 to 75.1 ms at full reuse (27.98×). These MLDR request timings exclude separately measured priming. All tested decisions are unchanged; no previous answer is cached.</p></div>
+  </section>
+
+  <section id="get-started" class="section getting-started">
+    <div class="section-heading horizontal"><div><p class="eyebrow">05 / Use Jeva</p><h2>Your GPU.<br>A few lines of Python.</h2></div><p class="section-description">Download the checkpoint once. Run directly in your Python process, with LoRA merged in memory and Hybrid option caching. No inference server required.</p></div>
+    <div class="code-grid"><div><div class="code-header"><span>Install · Linux / NVIDIA / Python 3.12</span><button class="copy-button" data-copy="install-code">Copy</button></div><pre id="install-code"><code>conda create -n jeva -c nvidia/label/cuda-12.8.1 \
+  python=3.12 cuda-nvcc=12.8.93 -y
+conda activate jeva
+pip install -r requirements.txt
+jeva-doctor --check-kernels --strict</code></pre><p class="code-note">Run from the downloaded repository. Model access may require <code>hf auth login</code>. The environment check reports missing GPU kernels explicitly.</p></div><div><div class="code-header"><span>One interface · three output types</span><button class="copy-button" data-copy="python-code">Copy</button></div><pre id="python-code"><code><span class="kw">from</span> jeva <span class="kw">import</span> Jeva, Choice, Noul, Score
+
+model = Jeva.from_pretrained(
+    <span class="str">"LIQIIIII/Jeva-4B"</span>,
+    merge_lora=<span class="kw">True</span>, cache=<span class="str">"hybrid"</span>,
+)
+r = model.system_one(
+    state=<span class="str">"My invoice was charged twice."</span>,
+    questions={
+        <span class="str">"team"</span>: Choice(
+            instructions=<span class="str">"Which team can help?"</span>,
+            criteria={<span class="str">"billing"</span>: <span class="str">"Charges and refunds"</span>,
+                      <span class="str">"technical"</span>: <span class="str">"Bugs and outages"</span>},
+            allow_null=<span class="kw">True</span>,
+        ),
+        <span class="str">"urgent"</span>: Noul(instructions=<span class="str">"Is this urgent?"</span>),
+        <span class="str">"severity"</span>: Score(
+            instructions=<span class="str">"How severe is the issue?"</span>,
+            criteria=[<span class="str">"Minor"</span>, <span class="str">"Moderate"</span>, <span class="str">"Severe"</span>],
+        ),
+    },
+)
+<span class="kw">print</span>(r.answers[<span class="str">"team"</span>].choice)</code></pre></div></div>
+    <div class="adapt-note"><h3>Adapt to your own decisions.</h3><p>A separate fine-tuning entry point accepts your labeled JSONL. Freeze the encoder and adapt the decision module, or continue with LoRA. Explicit validation data and portable checkpoints keep the workflow reproducible.</p><a href="https://github.com/LiQiiiii/Jeva/blob/main/docs/finetuning.md">Fine-tuning guide ↗</a></div>
+  </section>
+
+  <section id="evaluation" class="section evaluation-section"><div><p class="eyebrow">06 / Evaluate locally</p><h2>Your data.<br>The same decision interface.</h2><p>Run typed quality, null detection, permutation, and retrieval evaluations on local JSONL records. Candidate order, soft targets, and explicit null outcomes are preserved. Our prepared evaluation datasets will be released separately on Hugging Face.</p></div><ul class="eval-list"><li><span>General decisions</span><span>Typed · intent classification · web actions</span></li><li><span>Structural properties</span><span>Null detection · permutations · cache reuse</span></li><li><span>Large &amp; long candidates</span><span>Many-option selection · long-document decisions</span></li></ul><a class="text-link" href="https://github.com/LiQiiiii/Jeva/blob/main/docs/evaluation.md">Evaluation guide ↗</a><a class="text-link" data-link="dataset" hidden>Hugging Face dataset ↗</a></section>
+
+  <section class="section citation-section"><div class="section-heading"><p class="eyebrow">Reference</p><h2>Cite Jeva.</h2></div><div><div class="code-header"><span>BibTeX · manuscript</span><button class="copy-button" data-copy="citation-code">Copy</button></div><pre id="citation-code"><code>@misc{li2026jeva,
+  title  = {Jeva: System One Models from First Principles},
+  author = {Li, Qi and Wang, Xinchao},
+  year   = {2026},
+  note   = {Manuscript}
+}</code></pre></div></section>
+</main>
+<footer><a class="wordmark" href="#">Jeva<span>.</span></a><p>System One Models from First Principles</p><a href="#get-started">Run locally ↗</a></footer>
+<div class="toast" role="status" aria-live="polite" hidden>Copied</div>
+</body>
+</html>

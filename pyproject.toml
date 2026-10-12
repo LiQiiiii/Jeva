@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jeva-model"
+version = "0.1.0"
+description = "Local typed decisions with reusable option memory"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+authors = [{name = "Qi Li"}, {name = "Xinchao Wang"}]
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+dependencies = [
+  "torch==2.9.1", "transformers==5.17.0", "peft==0.21.2",
+  "accelerate==1.12.0", "huggingface-hub>=1.5,<2", "safetensors>=0.8,<1",
+  "numpy>=1.26,<3", "PyYAML>=6,<7", "tqdm>=4.66,<5"
+]
+
+[project.optional-dependencies]
+train = ["datasets>=4,<5"]
+
+[project.scripts]
+jeva-doctor = "jeva.doctor:main"
+jeva-download = "jeva.download:main"
+jeva-finetune = "jeva.finetune:main"
+jeva-evaluate = "jeva.evaluation:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
