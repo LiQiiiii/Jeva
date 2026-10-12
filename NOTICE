@@ -5,3 +5,6 @@ This repository's code is licensed under Apache License 2.0.
 The license does not relicense model weights, upstream datasets, or third-party
 dependencies. Consult their respective license notices and dataset provenance.
 
+The project-page opening uses Ferdinand Schmutzer's public-domain 1921 etching
+of Albert Einstein and a Noto Serif SC font subset licensed under SIL OFL 1.1.
+Attribution and the font license accompany the project-page assets.

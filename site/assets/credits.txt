@@ -1,0 +1,15 @@
+Einstein opening
+
+Portrait: Albert Einstein, etching by Ferdinand Schmutzer, 1921.
+Collection: Sigmund Freud Museum, Vienna. Public-domain artwork.
+Source: https://commons.wikimedia.org/wiki/File:Albert_Einstein,_Etching_by_Ferdinand_Schmutzer_1921.jpg
+The supplied 960-pixel reproduction is unchanged. Cropping, tone and inversion
+are presentation effects applied by CSS.
+
+Quotation: Albert Einstein and Leopold Infeld, The Evolution of Physics (1938).
+An excerpt is used; the Chinese translation is provided for this page.
+Reference: https://www.nationalacademies.org/read/10236/chapter/5
+
+Chinese quotation font: Noto Serif SC, a subset containing the displayed quote.
+SIL Open Font License 1.1; see NotoSerifSC-OFL.txt.
+Source: https://github.com/google/fonts/tree/main/ofl/notoserifsc

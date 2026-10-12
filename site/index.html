@@ -8,8 +8,10 @@
   <title>Jeva · System One Models from First Principles</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="opening.css">
   <script src="site-config.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="opening.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -17,6 +19,35 @@
   <a class="wordmark" href="#">Jeva<span aria-hidden="true">.</span></a>
   <nav aria-label="Main navigation"><a href="#principles">Principles</a><a href="#mechanism">In motion</a><a href="#results">Results</a><a href="#get-started">Use Jeva</a></nav>
 </header>
+<section class="einstein-opening" aria-label="A perspective on first principles">
+  <div class="opening-layer opening-base">
+    <div class="opening-symbols" aria-hidden="true"><span>{ A, B, C }</span><span>A · B · C · …</span><span>∅</span></div>
+    <div class="opening-composition">
+      <div class="opening-portrait"><img src="assets/einstein-1921.jpg" alt="Albert Einstein, in a 1921 etching by Ferdinand Schmutzer" width="960" height="1208" fetchpriority="high"></div>
+      <figure class="opening-quote">
+        <p class="opening-eyebrow">On first principles</p>
+        <blockquote>“The formulation of a problem is often more essential than its solution.”</blockquote>
+        <figcaption><span class="opening-authors">Albert Einstein &amp; Leopold Infeld</span><cite>The Evolution of Physics, 1938</cite></figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="opening-layer opening-reveal" id="opening-translation" aria-hidden="true">
+    <div class="opening-symbols" aria-hidden="true"><span>{ C, A, B }</span><span>{ A, B, C, … }</span><span>∅</span></div>
+    <div class="opening-composition">
+      <div class="opening-portrait"><img src="assets/einstein-1921.jpg" alt="" width="960" height="1208"></div>
+      <figure class="opening-quote">
+        <p class="opening-eyebrow">On first principles</p>
+        <blockquote lang="zh-CN"><span>“如何表述一个问题，</span><span>往往比求解它更为关键。”</span></blockquote>
+        <figcaption><span class="opening-authors">Albert Einstein &amp; Leopold Infeld</span><cite>The Evolution of Physics, 1938</cite></figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="opening-controls">
+    <div class="opening-discover"><span class="opening-pointer-hint"><i aria-hidden="true"></i>Move to reveal</span><button id="opening-toggle" type="button" aria-controls="opening-translation" aria-pressed="false" aria-label="Show Chinese translation" hidden>中文 / EN</button></div>
+    <a class="opening-continue" href="#main">Explore Jeva <span aria-hidden="true">↓</span></a>
+  </div>
+  <noscript><p class="opening-fallback" lang="zh-CN">如何表述一个问题，往往比求解它更为关键。</p></noscript>
+</section>
 <main id="main">
   <section class="hero">
     <p class="eyebrow">A native architecture for typed decisions</p>
