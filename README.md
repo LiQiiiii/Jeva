@@ -114,7 +114,7 @@ model = Jeva.from_pretrained("./models/Jeva-4B", local_files_only=True)
 For access-controlled weights, authenticate first with `hf auth login` using an
 authorized account. Pass `revision="<commit hash>"` to pin a Hub checkpoint.
 
-### Ranking and reuse
+### Cache and reuse
 
 ```python
 r = model.rank(
@@ -133,6 +133,7 @@ for item in r.ranking:
 print(model.cache_info())
 model.clear_cache()
 ```
+With hybrid caching enabled, Jeva reuses option representations across changing requests and newly assembled candidate sets, while computing each decision anew.
 
 `top_k` limits returned results, not the candidate pool. Keep the model instance
 alive to reuse option computation across requests. Choose `cache="set"` for exact
