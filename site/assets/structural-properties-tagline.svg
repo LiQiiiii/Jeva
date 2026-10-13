@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="570" height="32" viewBox="0 0 570 32" role="img" aria-labelledby="title">
+  <title id="title">Null-aware · Permutation-invariant · Option-scalable · Cacheable</title>
+  <text x="11.418" y="22" fill="#B2483F" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">Null-aware</text>
+  <text x="107.448" y="22" fill="#888888" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">·</text>
+  <text x="117.456" y="22" fill="#735F85" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">Permutation-invariant</text>
+  <text x="308.49" y="22" fill="#888888" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">·</text>
+  <text x="318.498" y="22" fill="#A27624" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">Option-scalable</text>
+  <text x="458.538" y="22" fill="#888888" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">·</text>
+  <text x="468.546" y="22" fill="#397E79" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold">Cacheable</text>
+</svg>
