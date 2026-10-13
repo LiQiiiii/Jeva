@@ -57,14 +57,15 @@
 .opening-authors { display: block; font-weight: 500; letter-spacing: .02em; }
 .opening-quote cite { display: block; margin-top: 3px; font: italic 13px/1.5 Georgia, "Times New Roman", serif; }
 .opening-symbols {
+  --symbol-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNDgwIDIwMCI+CiAgPGcgZmlsbD0iIzAwMCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsICdUaW1lcyBOZXcgUm9tYW4nLCBzZXJpZiIgZm9udC1zdHlsZT0iaXRhbGljIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4KICAgIDx0ZXh0IHg9IjYwIiB5PSIzNCI+eyBBLCBCLCBDIH08L3RleHQ+CiAgICA8dGV4dCB4PSIxODAiIHk9IjM0IiBmb250LXNpemU9IjI5Ij7iiIU8L3RleHQ+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjM0Ij5BIOKGkiBCPC90ZXh0PgogICAgPHRleHQgeD0iNDIwIiB5PSIzNCI+eyBCLCBEIH08L3RleHQ+CiAgICA8dGV4dCB4PSI2MCIgeT0iODQiPnsgQywgQSwgQiB9PC90ZXh0PgogICAgPHRleHQgeD0iMTgwIiB5PSI4NCI+QSDCtyBCIMK3IEM8L3RleHQ+CiAgICA8dGV4dCB4PSIzMDAiIHk9Ijg0Ij57IEEsIEMgfTwvdGV4dD4KICAgIDx0ZXh0IHg9IjQyMCIgeT0iODQiIGZvbnQtc2l6ZT0iMjkiPuKIhTwvdGV4dD4KICAgIDx0ZXh0IHg9IjYwIiB5PSIxMzQiIGZvbnQtc2l6ZT0iMjkiPuKIhTwvdGV4dD4KICAgIDx0ZXh0IHg9IjE4MCIgeT0iMTM0Ij57IEIsIEMsIEQgfTwvdGV4dD4KICAgIDx0ZXh0IHg9IjMwMCIgeT0iMTM0Ij5BLCBCLCDigKY8L3RleHQ+CiAgICA8dGV4dCB4PSI0MjAiIHk9IjEzNCI+QiDihpQgQzwvdGV4dD4KICAgIDx0ZXh0IHg9IjYwIiB5PSIxODQiPnsgQSwgRCB9PC90ZXh0PgogICAgPHRleHQgeD0iMTgwIiB5PSIxODQiPkMg4oaSIEE8L3RleHQ+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjE4NCIgZm9udC1zaXplPSIyOSI+4oiFPC90ZXh0PgogICAgPHRleHQgeD0iNDIwIiB5PSIxODQiPnsgQSwgQiwgQyB9PC90ZXh0PgogIDwvZz4KPC9zdmc+Cg==");
   position: absolute;
   inset: 0;
   pointer-events: none;
   user-select: none;
   background: currentColor;
   opacity: .085;
-  mask-image: url("assets/opening-symbols.svg");
-  -webkit-mask-image: url("assets/opening-symbols.svg");
+  mask-image: var(--symbol-mask);
+  -webkit-mask-image: var(--symbol-mask);
   mask-size: 480px 200px;
   -webkit-mask-size: 480px 200px;
   mask-repeat: repeat;
