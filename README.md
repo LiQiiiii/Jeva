@@ -59,31 +59,109 @@ from jeva import Jeva, Choice, Noul, Score
 model = Jeva.from_pretrained("LIQIIIII/Jeva-4B", device="cuda")
 
 r = model.system_one(
-    state="My invoice was charged twice and nobody answers the phone!",
+    state=(
+        "The production login page returns HTTP 503. "
+        "All customers are unable to sign in or complete purchases."
+    ),
     questions={
-        "urgency": Noul(instructions="Is this urgent?"),
-        "department": Choice(
-            instructions="Which team should handle this?",
-            criteria={
-                "billing": "Charges, invoices, refunds",
-                "technical": "Bugs and outages",
-            },
-            allow_null=True,
+        "outage": Noul(
+            instructions="Does this report an ongoing service outage?"
         ),
-        "frustration": Score(
-            instructions="How frustrated is the customer?",
-            criteria=["Calm", "Frustrated", "Very angry"],
+        "team": Choice(
+            instructions="Which team should handle this support ticket?",
+            criteria={
+                "billing": "Payment disputes, invoices, and refunds.",
+                "engineering": "Service outages, software errors, and broken features.",
+                "general": "All other customer support requests.",
+            },
+            allow_null=False,
+        ),
+        "impact": Score(
+            instructions="Rate the reported customer impact.",
+            criteria=[
+                "No customers are affected.",
+                "Some customers are affected, but the service remains usable.",
+                "All customers are blocked from using a core service.",
+            ],
+            values=[0, 1, 2],
         ),
     },
 )
 
-print(r.answers["urgency"].noul)
-print(r.answers["department"].choice)
-print(r.answers["department"].probabilities)
-print(r.answers["department"].null_probability)
-print(r.answers["frustration"].score)
-print(r.usage.input_tokens, r.latency_ms)
+print("Outage probability:", r.answers["outage"].noul)
+print("Assigned team:", r.answers["team"].choice)
+print("Team probabilities:", r.answers["team"].probabilities)
+print("Impact score (0–2):", r.answers["impact"].score)
+
 ```
+
+### Cache and reuse
+
+```python
+tools = {
+    "refund": "Issue a refund for an existing payment.",
+    "status": "Check the payment status of an invoice.",
+    "search": "Search customer contact details.",
+}
+
+model.clear_cache()
+
+r1 = model.rank(
+    state="Refund the duplicate charge on invoice INV-1042.",
+    candidates=tools,
+)
+
+r2 = model.rank(
+    state="Check whether invoice INV-2087 has been paid.",
+    candidates=tools,
+)
+
+r3 = model.rank(
+    state="Cancel order ORD-3091 before it ships.",
+    candidates={
+        "refund": tools["refund"],
+        "search": tools["search"],
+        "cancel": "Cancel an order before it is shipped.",
+    },
+)
+
+print("\nRanking for the first request:")
+for item in r1.ranking:
+    print(f"  {item.label}: {item.probability:.4f}")
+
+print("\nCandidate tokens: encoded = computed now; cached = reused.")
+print(
+    f"\n{'Request':<20}"
+    f"{'Top choice':<12}"
+    f"{'Latency (ms)':>14}"
+    f"{'Encoded tokens':>17}"
+    f"{'Cached tokens':>16}"
+)
+
+for name, result in [
+    ("Cold request", r1),
+    ("Same candidates", r2),
+    ("Recombined set", r3),
+]:
+    print(
+        f"{name:<20}"
+        f"{result.ranking[0].label:<12}"
+        f"{result.latency_ms:>14.1f}"
+        f"{result.usage.encoded_option_tokens:>17}"
+        f"{result.usage.cached_option_tokens:>16}"
+    )
+```
+With hybrid caching enabled, Jeva reuses option representations across changing requests and newly assembled candidate sets, while computing each decision anew.
+
+`top_k` limits returned results, not the candidate pool. Keep the model instance
+alive to reuse option computation across requests. Choose `cache="set"` for exact
+ordered tuples, `cache="hybrid"` for additional individual-option reuse, or
+`cache="none"` to disable caching. No previous answer is cached.
+
+Caches have entry and tensor-byte limits. `usage.input_tokens` counts encoder
+tokens actually processed; `requested_input_tokens` includes reused tokens.
+`latency_ms` includes tokenization and synchronized execution, excluding model
+loading. Over-limit inputs raise an error unless truncation is explicitly enabled.
 
 | Interface | Result |
 | :-- | :-- |
@@ -113,37 +191,6 @@ model = Jeva.from_pretrained("./models/Jeva-4B", local_files_only=True)
 
 For access-controlled weights, authenticate first with `hf auth login` using an
 authorized account. Pass `revision="<commit hash>"` to pin a Hub checkpoint.
-
-### Cache and reuse
-
-```python
-r = model.rank(
-    state="Find a tool that can refund a duplicate invoice.",
-    candidates={
-        "refund": "Issue a refund for an existing payment.",
-        "status": "Check whether an invoice has been paid.",
-        "search": "Search customer contact details.",
-    },
-    instructions="Rank the tools by suitability for this request.",
-    top_k=3,
-)
-for item in r.ranking:
-    print(item.label, item.probability)
-
-print(model.cache_info())
-model.clear_cache()
-```
-With hybrid caching enabled, Jeva reuses option representations across changing requests and newly assembled candidate sets, while computing each decision anew.
-
-`top_k` limits returned results, not the candidate pool. Keep the model instance
-alive to reuse option computation across requests. Choose `cache="set"` for exact
-ordered tuples, `cache="hybrid"` for additional individual-option reuse, or
-`cache="none"` to disable caching. No previous answer is cached.
-
-Caches have entry and tensor-byte limits. `usage.input_tokens` counts encoder
-tokens actually processed; `requested_input_tokens` includes reused tokens.
-`latency_ms` includes tokenization and synchronized execution, excluding model
-loading. Over-limit inputs raise an error unless truncation is explicitly enabled.
 
 ## Evaluation
 
