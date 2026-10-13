@@ -95,6 +95,23 @@ print("Impact score (0–2):", r.answers["impact"].score)
 
 ```
 
+| Interface | Result |
+| :-- | :-- |
+| `Choice` | A candidate key and its probability distribution |
+| `Choice(..., allow_null=True)` | A candidate key or `None`, with explicit null probability |
+| `Noul` | Probability that the statement is true, between 0 and 1 |
+| `Score` | Expected rubric level; supplied `values` define custom numerical units |
+
+For open-set Choice, candidate probabilities plus `null_probability` sum to one.
+`conditional_probabilities` reports preference conditional on selecting a candidate.
+Noul is a truth probability, not the null outcome. Exact ties use the first
+candidate; open-set ties place null first.
+
+Mappings format options as `label: description`; lists preserve their text.
+For exact dataset option text and order, use `model.predict(...)`.
+The [runnable example](examples/local_inference.py) returns all three output types.
+
+
 ### Cache and reuse
 
 ```python
@@ -163,21 +180,6 @@ tokens actually processed; `requested_input_tokens` includes reused tokens.
 `latency_ms` includes tokenization and synchronized execution, excluding model
 loading. Over-limit inputs raise an error unless truncation is explicitly enabled.
 
-| Interface | Result |
-| :-- | :-- |
-| `Choice` | A candidate key and its probability distribution |
-| `Choice(..., allow_null=True)` | A candidate key or `None`, with explicit null probability |
-| `Noul` | Probability that the statement is true, between 0 and 1 |
-| `Score` | Expected rubric level; supplied `values` define custom numerical units |
-
-For open-set Choice, candidate probabilities plus `null_probability` sum to one.
-`conditional_probabilities` reports preference conditional on selecting a candidate.
-Noul is a truth probability, not the null outcome. Exact ties use the first
-candidate; open-set ties place null first.
-
-Mappings format options as `label: description`; lists preserve their text.
-For exact dataset option text and order, use `model.predict(...)`.
-The [runnable example](examples/local_inference.py) returns all three output types.
 
 ### Offline loading
 
