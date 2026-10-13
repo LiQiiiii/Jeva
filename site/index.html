@@ -151,27 +151,42 @@ conda activate jeva
 pip install -r requirements.txt
 jeva-doctor --check-kernels --strict</code></pre><p class="code-note">Run from the downloaded repository. Model access may require <code>hf auth login</code>. The environment check reports missing GPU kernels explicitly.</p></div><div><div class="code-header"><span>One interface · three output types</span><button class="copy-button" data-copy="python-code">Copy</button></div><pre id="python-code"><code><span class="kw">from</span> jeva <span class="kw">import</span> Jeva, Choice, Noul, Score
 
-model = Jeva.from_pretrained(
-    <span class="str">"LIQIIIII/Jeva-4B"</span>,
-    merge_lora=<span class="kw">True</span>, cache=<span class="str">"hybrid"</span>,
-)
+model = Jeva.from_pretrained(<span class="str">"LIQIIIII/Jeva-4B"</span>, device=<span class="str">"cuda"</span>)
+
 r = model.system_one(
-    state=<span class="str">"My invoice was charged twice."</span>,
+    state=(
+        <span class="str">"The production login page returns HTTP 503. "</span>
+        <span class="str">"All customers are unable to sign in or complete purchases."</span>
+    ),
     questions={
-        <span class="str">"team"</span>: Choice(
-            instructions=<span class="str">"Which team can help?"</span>,
-            criteria={<span class="str">"billing"</span>: <span class="str">"Charges and refunds"</span>,
-                      <span class="str">"technical"</span>: <span class="str">"Bugs and outages"</span>},
-            allow_null=<span class="kw">True</span>,
+        <span class="str">"outage"</span>: Noul(
+            instructions=<span class="str">"Does this report an ongoing service outage?"</span>
         ),
-        <span class="str">"urgent"</span>: Noul(instructions=<span class="str">"Is this urgent?"</span>),
-        <span class="str">"severity"</span>: Score(
-            instructions=<span class="str">"How severe is the issue?"</span>,
-            criteria=[<span class="str">"Minor"</span>, <span class="str">"Moderate"</span>, <span class="str">"Severe"</span>],
+        <span class="str">"team"</span>: Choice(
+            instructions=<span class="str">"Which team should handle this support ticket?"</span>,
+            criteria={
+                <span class="str">"billing"</span>: <span class="str">"Payment disputes, invoices, and refunds."</span>,
+                <span class="str">"engineering"</span>: <span class="str">"Service outages, software errors, and broken features."</span>,
+                <span class="str">"general"</span>: <span class="str">"All other customer support requests."</span>,
+            },
+            allow_null=<span class="kw">False</span>,
+        ),
+        <span class="str">"impact"</span>: Score(
+            instructions=<span class="str">"Rate the reported customer impact."</span>,
+            criteria=[
+                <span class="str">"No customers are affected."</span>,
+                <span class="str">"Some customers are affected, but the service remains usable."</span>,
+                <span class="str">"All customers are blocked from using a core service."</span>,
+            ],
+            values=[0, 1, 2],
         ),
     },
 )
-<span class="kw">print</span>(r.answers[<span class="str">"team"</span>].choice)</code></pre></div></div>
+
+<span class="kw">print</span>(<span class="str">"Outage probability:"</span>, r.answers[<span class="str">"outage"</span>].noul)
+<span class="kw">print</span>(<span class="str">"Assigned team:"</span>, r.answers[<span class="str">"team"</span>].choice)
+<span class="kw">print</span>(<span class="str">"Team probabilities:"</span>, r.answers[<span class="str">"team"</span>].probabilities)
+<span class="kw">print</span>(<span class="str">"Impact score (0–2):"</span>, r.answers[<span class="str">"impact"</span>].score)</code></pre></div></div>
     <div class="adapt-note"><h3>Adapt to your own decisions.</h3><p>A separate fine-tuning entry point accepts your labeled JSONL. Freeze the encoder and adapt the decision module, or continue with LoRA. Explicit validation data and portable checkpoints keep the workflow reproducible.</p><a href="https://github.com/LiQiiiii/Jeva/blob/main/docs/finetuning.md">Fine-tuning guide ↗</a></div>
   </section>
 
