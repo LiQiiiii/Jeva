@@ -8,7 +8,7 @@ National University of Singapore
 
 [Model](https://huggingface.co/LIQIIIII/Jeva-4B) · [Project page](https://liqiiiii.github.io/Jeva/) · [Evaluation](docs/evaluation.md) · [Fine-tuning](docs/finetuning.md)
 
-**Null-aware. Order-independent. Scalable. Cacheable.**
+**Null-aware. Permutation-invariant. Option-scalable. Cacheable.**
 
 </div>
 
