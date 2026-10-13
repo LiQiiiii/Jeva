@@ -115,58 +115,101 @@ The [runnable example](examples/local_inference.py) returns all three output typ
 ### Cache and reuse
 
 ```python
-tools = {
-    "refund": "Issue a refund for an existing payment.",
-    "status": "Check the payment status of an invoice.",
-    "search": "Search customer contact details.",
+
+policies = {
+    "refund": (
+        "Duplicate payments and refunds. When a customer reports being charged "
+        "twice for the same purchase, first verify that both transactions have "
+        "settled and refer to the same order. A pending authorization is not a "
+        "second completed payment. If two settled charges are confirmed, refund "
+        "the duplicate transaction to the original payment method and retain "
+        "the valid payment. Record both transaction identifiers in the support "
+        "case. Tell the customer that the refund normally appears within five "
+        "to ten business days. This procedure does not cancel the order or "
+        "change its delivery status."
+    ),
+    "cancellation": (
+        "Order cancellation before dispatch. Customers may cancel an order "
+        "while its fulfillment status is unshipped. Check the warehouse record "
+        "before confirming cancellation. If the package has not been handed "
+        "to the carrier, stop fulfillment, release reserved inventory, and "
+        "refund the original payment. Send a cancellation confirmation after "
+        "the warehouse acknowledges the request. If the package has already "
+        "been dispatched, do not promise that shipment can be stopped; explain "
+        "the return procedure instead. This policy concerns cancellation of "
+        "the entire purchase, rather than correction of a duplicate charge."
+    ),
+    "delivery": (
+        "Shipment tracking and delivery delays. For an order that has already "
+        "been dispatched, retrieve the carrier name, tracking number, latest "
+        "scan, and estimated delivery date. Explain the current shipment status "
+        "without guaranteeing a delivery time not confirmed by the carrier. "
+        "If tracking has not updated for three business days, open a carrier "
+        "investigation and notify the customer when new information arrives. "
+        "Check the delivery address if the carrier reports an address problem. "
+        "Do not cancel a dispatched order through the warehouse cancellation "
+        "process or issue a duplicate-payment refund."
+    ),
+    "account": (
+        "Customer contact information and account updates. After verifying "
+        "the customer's identity, support staff may update the email address "
+        "or telephone number associated with an account. Confirm the new "
+        "information and send an account-change notification. Never request "
+        "a password or a full payment-card number in a support conversation. "
+        "Changing account contact details does not automatically modify the "
+        "delivery address of an existing order. For an order already in "
+        "fulfillment, check its status and follow the relevant address-change "
+        "procedure. This policy does not authorize refunds or cancellations."
+    ),
 }
 
+model.cache = "hybrid"
 model.clear_cache()
 
 r1 = model.rank(
-    state="Refund the duplicate charge on invoice INV-1042.",
-    candidates=tools,
+    state="I was charged twice for the same order. How can I get one charge refunded?",
+    candidates=policies,
 )
 
 r2 = model.rank(
-    state="Check whether invoice INV-2087 has been paid.",
-    candidates=tools,
+    state="My package has shipped, but tracking has not updated for four business days.",
+    candidates=policies,
 )
 
-r3 = model.rank(
-    state="Cancel order ORD-3091 before it ships.",
-    candidates={
-        "refund": tools["refund"],
-        "search": tools["search"],
-        "cancel": "Cancel an order before it is shipped.",
-    },
-)
+request = "Please cancel my order. The warehouse confirms it has not shipped."
+subset = {key: policies[key] for key in ["refund", "cancellation", "account"]}
 
-print("\nRanking for the first request:")
-for item in r1.ranking:
-    print(f"  {item.label}: {item.probability:.4f}")
+r3 = model.rank(state=request, candidates=subset)
 
-print("\nCandidate tokens: encoded = computed now; cached = reused.")
+model.cache = "none"
+try:
+    r3_off = model.rank(state=request, candidates=subset)
+finally:
+    model.cache = "hybrid"
+
 print(
-    f"\n{'Request':<20}"
-    f"{'Top choice':<12}"
+    f"\n{'Request':<25}"
+    f"{'Top choice':<15}"
     f"{'Latency (ms)':>14}"
     f"{'Encoded tokens':>17}"
     f"{'Cached tokens':>16}"
 )
 
 for name, result in [
-    ("Cold request", r1),
-    ("Same candidates", r2),
-    ("Recombined set", r3),
+    ("1. Cold policy bank", r1),
+    ("2. Same policy bank", r2),
+    ("3. New candidate subset", r3),
+    ("3. Same request, Off", r3_off),
 ]:
     print(
-        f"{name:<20}"
-        f"{result.ranking[0].label:<12}"
+        f"{name:<25}"
+        f"{result.ranking[0].label:<15}"
         f"{result.latency_ms:>14.1f}"
         f"{result.usage.encoded_option_tokens:>17}"
         f"{result.usage.cached_option_tokens:>16}"
     )
+
+print(f"\nSame-request Off / reuse latency: {r3_off.latency_ms / r3.latency_ms:.2f}x")
 ```
 With hybrid caching enabled, Jeva reuses option representations across changing requests and newly assembled candidate sets, while computing each decision anew.
 
