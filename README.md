@@ -292,16 +292,17 @@ site/          project page, paper figures, and interactive diagrams
 .github/       project-page deployment workflow
 ```
 
-## Citation and license
+## Citation
 
 ```bibtex
-@misc{li2026jeva,
-  title  = {Jeva: System One Models from First Principles},
-  author = {Li, Qi and Wang, Xinchao},
-  year   = {2026},
-  note   = {Manuscript}
+@article{li2026jeva,
+  title={Jeva: System One Models from First Principles},
+  author={Li, Qi and Wang, Xinchao},
+  journal={arXiv preprint arXiv:2610.18773},
+  year={2026}
 }
 ```
 
+##  License
 Code: [Apache-2.0](LICENSE). Model weights and datasets retain their respective
-licenses. No model weights, credentials, or original training corpora are included.
+licenses.
