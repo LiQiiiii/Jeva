@@ -222,16 +222,6 @@ print(f"\nSame-request Off / reuse latency: {r3_off.latency_ms / r3.latency_ms:.
 ```
 With hybrid caching enabled, Jeva reuses option representations across changing requests and newly assembled candidate sets, while computing each decision anew.
 
-`top_k` limits returned results, not the candidate pool. Keep the model instance
-alive to reuse option computation across requests. Choose `cache="set"` for exact
-ordered tuples, `cache="hybrid"` for additional individual-option reuse, or
-`cache="none"` to disable caching. No previous answer is cached.
-
-Caches have entry and tensor-byte limits. `usage.input_tokens` counts encoder
-tokens actually processed; `requested_input_tokens` includes reused tokens.
-`latency_ms` includes tokenization and synchronized execution, excluding model
-loading. Over-limit inputs raise an error unless truncation is explicitly enabled.
-
 
 ### Offline loading
 
@@ -242,9 +232,6 @@ jeva-download LIQIIIII/Jeva-4B --local-dir ./models/Jeva-4B
 ```python
 model = Jeva.from_pretrained("./models/Jeva-4B", local_files_only=True)
 ```
-
-For access-controlled weights, authenticate first with `hf auth login` using an
-authorized account. Pass `revision="<commit hash>"` to pin a Hub checkpoint.
 
 ## Evaluation
 
@@ -262,12 +249,11 @@ permutations, cache comparisons, and resumable runs.
 
 <p align="center"><a href="site/assets/structural_properties.pdf"><img src="site/assets/structural_properties.png" width="1200" alt="Four experiments from the paper: null detection, option-order stability, candidate scaling, and cache reuse"></a></p>
 
-The manuscript reports 78.30% Typed Decisions accuracy, 98.66% null-detection
+Jeva achieves 78.30% Typed Decisions accuracy, 98.66% null-detection
 AUROC, and zero observed flips on 600 Choice items. Jeva handles 2,048 candidates
 at 69.88% accuracy and 12.04 s median latency. Full option reuse across newly
 assembled MLDR sets yields a 27.98× ratio of median request latencies, excluding
-separately measured priming. These are paper measurements, not outputs of the
-example code.
+separately measured priming. 
 
 ## Fine-tune on your own data
 
