@@ -30,7 +30,16 @@ computation is reusable.
 - **Two-level reuse:** cache complete option tuples, or reuse individual option
   vectors and projected keys/values across newly assembled sets.
 
+## Citation
 
+```bibtex
+@article{li2026jeva,
+  title={Jeva: System One Models from First Principles},
+  author={Li, Qi and Wang, Xinchao},
+  journal={arXiv preprint arXiv:2610.18773},
+  year={2026}
+}
+```
 
 ## Installation
 
@@ -292,16 +301,7 @@ site/          project page, paper figures, and interactive diagrams
 .github/       project-page deployment workflow
 ```
 
-## Citation
 
-```bibtex
-@article{li2026jeva,
-  title={Jeva: System One Models from First Principles},
-  author={Li, Qi and Wang, Xinchao},
-  journal={arXiv preprint arXiv:2610.18773},
-  year={2026}
-}
-```
 
 ##  License
 Code: [Apache-2.0](LICENSE). Model weights and datasets retain their respective
