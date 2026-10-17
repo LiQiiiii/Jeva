@@ -14,7 +14,7 @@ National University of Singapore
 
 <p align="center"><a href="site/assets/figure1.pdf"><img src="site/assets/figure1.png" width="1000" alt="Jeva architecture and four structural properties: null awareness, permutation invariance, option scalability, and reusable option memory"></a></p>
 
-Jeva is a system one model with native design. Give it a state and typed
+Jeva is a system one model (e.g., Jev) with native design. Give it a state and typed
 questions; get candidate probabilities, a Boolean probability, or an expected
 rubric score. The language encoder represents the state and each option
 independently. A compact decision stack updates only the state against the
